@@ -15,8 +15,12 @@ const HomeScreen = ({ navigation }: any) => {
     setFoods(data);
   };
 
+  // ✅ Khi bấm vào món sẽ chuyển đến FoodDetail
   const renderItem = ({ item }: { item: Food }) => (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate("FoodDetail", { food: item })}
+    >
       <Image source={getImage(item.image)} style={styles.image} />
       <Text style={styles.name}>{item.name}</Text>
       <Text style={styles.category}>{item.category}</Text>

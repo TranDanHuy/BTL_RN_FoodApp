@@ -1,65 +1,64 @@
-import React, { useContext, useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import { CartContext } from "../../context/CartContext";
-import { Food } from "../../services/foodService";
-import { getImage } from "../../utils/imageMapper"; // ✅ thêm hàm ánh xạ
+import React, { useState } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { useCart } from "../../context/CartContext";
+import { getImage } from "../../utils/imageMapper";
 
 const FoodDetailScreen = ({ route, navigation }: any) => {
-  const { food } = route.params as { food: Food };
-  const { addToCart } = useContext(CartContext);
+  const { food } = route.params;
+  const { addToCart } = useCart();
   const [qty, setQty] = useState(1);
 
   return (
-    <View style={{ flex: 1, padding: 12, backgroundColor: "#fff" }}>
-      <Image
-        source={getImage(food.image)} // ✅ fix require() động
-        style={{ width: "100%", height: 200, borderRadius: 8 }}
-      />
+    <View style={styles.container}>
+      <Image source={getImage(food.image)} style={styles.image} />
+      <Text style={styles.name}>{food.name}</Text>
+      <Text style={styles.price}>{food.price.toLocaleString()} đ</Text>
+      <Text style={styles.desc}>{food.description}</Text>
 
-      <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 10 }}>
-        {food.name}
-      </Text>
-      <Text style={{ fontSize: 18, color: "#f97316", marginVertical: 8 }}>
-        {food.price} đ
-      </Text>
-      <Text>{food.description}</Text>
-
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginVertical: 10,
-        }}
-      >
+      <View style={styles.quantityBox}>
         <TouchableOpacity onPress={() => setQty(Math.max(1, qty - 1))}>
-          <Text style={{ fontSize: 22, paddingHorizontal: 15 }}>-</Text>
+          <Text style={styles.qtyButton}>-</Text>
         </TouchableOpacity>
-
-        <Text style={{ fontSize: 18 }}>{qty}</Text>
-
+        <Text style={styles.qtyValue}>{qty}</Text>
         <TouchableOpacity onPress={() => setQty(qty + 1)}>
-          <Text style={{ fontSize: 22, paddingHorizontal: 15 }}>+</Text>
+          <Text style={styles.qtyButton}>+</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity
+        style={styles.addButton}
         onPress={() => {
-          addToCart({ ...food, quantity: qty });
+          addToCart(food, qty);
           navigation.navigate("Cart");
         }}
-        style={{
-          backgroundColor: "#f97316",
-          padding: 12,
-          borderRadius: 8,
-          alignItems: "center",
-        }}
       >
-        <Text style={{ color: "#fff", fontWeight: "bold" }}>
-          Thêm vào giỏ hàng
-        </Text>
+        <Text style={styles.addText}>🛒 Thêm vào giỏ hàng</Text>
       </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#fff", padding: 16 },
+  image: { width: "100%", height: 250, borderRadius: 10 },
+  name: { fontSize: 22, fontWeight: "bold", color: "#ff6600", marginTop: 10 },
+  price: { fontSize: 18, color: "#ff3300", marginVertical: 5 },
+  desc: { color: "#555", fontSize: 15, marginBottom: 10 },
+  quantityBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 10,
+  },
+  qtyButton: { fontSize: 28, paddingHorizontal: 15, color: "#ff6600" },
+  qtyValue: { fontSize: 20, marginHorizontal: 10 },
+  addButton: {
+    backgroundColor: "#ff6600",
+    padding: 14,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  addText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+});
 
 export default FoodDetailScreen;
