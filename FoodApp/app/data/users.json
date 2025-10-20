@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "fullName": "Admin Hệ Thống",
+    "email": "admin@gmail.com",
+    "password": "123456",
+    "role": "admin",
+    "active": true
+  },
+  {
+    "id": "2",
+    "fullName": "Người Dùng Thử",
+    "email": "user@gmail.com",
+    "password": "123456",
+    "role": "user",
+    "active": true
+  },
+  {
+    "id": "3",
+    "fullName": "Tài Khoản Chưa Xác Minh",
+    "email": "newuser@gmail.com",
+    "password": "123456",
+    "role": "user",
+    "active": false
+  }
+]

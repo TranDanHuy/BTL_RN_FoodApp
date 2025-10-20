@@ -1,14 +1,14 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import { AuthProvider } from "./app/context/AuthContext";
 import RootNavigator from "./app/navigation/RootNavigator";
-import { CartProvider } from "./app/context/CartContext";
 
 export default function App() {
   return (
-    <CartProvider>
+    <AuthProvider>
       <NavigationContainer>
         <RootNavigator />
       </NavigationContainer>
-    </CartProvider>
+    </AuthProvider>
   );
 }
