@@ -1,4 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 import { Food } from "../services/foodService";
 
 export type CartItem = {
@@ -12,6 +14,7 @@ type CartContextType = {
   removeFromCart: (id: string) => void;
   clearCart: () => void;
   totalPrice: number;
+  placeOrder: () => Promise<void>;
 };
 
 export const CartContext = createContext<CartContextType>({
@@ -20,6 +23,7 @@ export const CartContext = createContext<CartContextType>({
   removeFromCart: () => {},
   clearCart: () => {},
   totalPrice: 0,
+  placeOrder: async () => {},
 });
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
@@ -50,9 +54,36 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     0
   );
 
+  // ✅ Lưu đơn hàng
+  const placeOrder = async () => {
+    if (cartItems.length === 0) {
+      Alert.alert("Giỏ hàng trống", "Hãy thêm món ăn trước khi đặt hàng!");
+      return;
+    }
+
+    const order = {
+      id: Date.now().toString(),
+      items: cartItems,
+      total: totalPrice,
+      date: new Date().toLocaleString("vi-VN"),
+    };
+
+    try {
+      const existing = await AsyncStorage.getItem("orders");
+      const orders = existing ? JSON.parse(existing) : [];
+      orders.push(order);
+      await AsyncStorage.setItem("orders", JSON.stringify(orders));
+
+      Alert.alert("🎉 Thành công", "Đơn hàng của bạn đã được đặt!");
+      clearCart();
+    } catch (e) {
+      Alert.alert("Lỗi", "Không thể lưu đơn hàng!");
+    }
+  };
+
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, clearCart, totalPrice }}
+      value={{ cartItems, addToCart, removeFromCart, clearCart, totalPrice, placeOrder }}
     >
       {children}
     </CartContext.Provider>

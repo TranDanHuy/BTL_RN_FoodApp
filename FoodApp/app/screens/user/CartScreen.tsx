@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native
 import { useCart } from "../../context/CartContext";
 
 const CartScreen = () => {
-  const { cartItems, removeFromCart, clearCart, totalPrice } = useCart();
+  const { cartItems, removeFromCart, clearCart, totalPrice, placeOrder } = useCart();
 
   return (
     <View style={styles.container}>
@@ -37,8 +37,12 @@ const CartScreen = () => {
 
           <Text style={styles.total}>Tổng cộng: {totalPrice.toLocaleString()} đ</Text>
 
+          <TouchableOpacity style={styles.orderBtn} onPress={placeOrder}>
+            <Text style={styles.btnText}>Đặt hàng ngay</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.clearBtn} onPress={clearCart}>
-            <Text style={{ color: "#fff", fontWeight: "bold" }}>Xóa tất cả</Text>
+            <Text style={styles.btnText}>Xóa tất cả</Text>
           </TouchableOpacity>
         </>
       )}
@@ -72,12 +76,20 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     color: "#ff6600",
   },
+  orderBtn: {
+    backgroundColor: "#4CAF50",
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 8,
+  },
   clearBtn: {
     backgroundColor: "#ff3333",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
   },
+  btnText: { color: "#fff", fontWeight: "bold" },
 });
 
 export default CartScreen;
