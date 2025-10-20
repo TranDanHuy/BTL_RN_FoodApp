@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useCart } from "../../context/CartContext";
 import { getImage } from "../../utils/imageMapper";
+import { useNavigation } from "@react-navigation/native";
 
-const FoodDetailScreen = ({ route, navigation }: any) => {
+const FoodDetailScreen = ({ route }: any) => {
   const { food } = route.params;
   const { addToCart } = useCart();
   const [qty, setQty] = useState(1);
+  const navigation = useNavigation();
+
+  // 🔻 Ẩn Bottom Tab khi vào trang chi tiết
+  useLayoutEffect(() => {
+    const parent = navigation.getParent();
+    parent?.setOptions({ tabBarStyle: { display: "none" } });
+
+    return () => parent?.setOptions({ tabBarStyle: undefined });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
@@ -29,7 +39,7 @@ const FoodDetailScreen = ({ route, navigation }: any) => {
         style={styles.addButton}
         onPress={() => {
           addToCart(food, qty);
-          navigation.navigate("Cart");
+          navigation.navigate("Cart" as never);
         }}
       >
         <Text style={styles.addText}>🛒 Thêm vào giỏ hàng</Text>
