@@ -3,35 +3,40 @@
     "id": "1",
     "name": "Trà sữa trân châu đường đen",
     "price": 35000,
+    "category": "Đồ uống",
     "description": "Trà sữa thơm béo, topping trân châu dai ngon.",
-    "image": "TraSua.png"
+    "image": "TraSua"
   },
   {
     "id": "2",
     "name": "Pizza hải sản phô mai",
     "price": 120000,
+    "category": "Món chính",
     "description": "Pizza hải sản phô mai Mozzarella béo ngậy.",
-    "image": "Pizza.png"
+    "image": "Pizza"
   },
   {
     "id": "3",
     "name": "Cơm gà xối mỡ",
     "price": 45000,
+    "category": "Món chính",
     "description": "Cơm gà giòn rụm, xối mỡ vàng thơm.",
-    "image": "Burger.png"
+    "image": "Burger"
   },
   {
     "id": "4",
     "name": "Sushi cá hồi tươi",
     "price": 65000,
+    "category": "Món chính",
     "description": "Sushi cá hồi tươi ngon, ăn kèm wasabi.",
-    "image": "Sushi.png"
+    "image": "Sushi"
   },
   {
     "id": "5",
     "name": "Salad rau củ dầu giấm",
     "price": 30000,
+    "category": "Khai vị",
     "description": "Rau củ tươi ngon, trộn dầu giấm chua ngọt.",
-    "image": "Salad.png"
+    "image": "Salad"
   }
 ]
