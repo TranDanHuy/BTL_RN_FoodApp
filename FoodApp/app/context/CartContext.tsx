@@ -53,10 +53,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // ➕ Thêm món
   const addToCart = (food: Food, quantity = 1) => {
     setCartItems((prev) => {
-      const exist = prev.find((item) => item.food.id === food.id);
+      const exist = prev.find((item) => item.food._id === food._id); // ✅ dùng _id
       if (exist) {
         return prev.map((item) =>
-          item.food.id === food.id
+          item.food._id === food._id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
@@ -67,7 +67,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // ❌ Xóa 1 món
   const removeFromCart = (id: string) => {
-    setCartItems((prev) => prev.filter((item) => item.food.id !== id));
+    setCartItems((prev) => prev.filter((item) => item.food._id !== id)); // ✅ dùng _id
   };
 
   // 🧹 Xóa tất cả món
@@ -96,13 +96,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     };
 
     try {
-      // Lưu lịch sử đơn hàng
       const existing = await AsyncStorage.getItem("orders");
       const orders = existing ? JSON.parse(existing) : [];
       orders.push(order);
       await AsyncStorage.setItem("orders", JSON.stringify(orders));
 
-      // Dọn giỏ hàng
       clearCart();
       Alert.alert("🎉 Thành công", "Đơn hàng của bạn đã được đặt!");
     } catch (e) {
@@ -112,7 +110,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, clearCart, totalPrice, placeOrder }}
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        totalPrice,
+        placeOrder,
+      }}
     >
       {children}
     </CartContext.Provider>

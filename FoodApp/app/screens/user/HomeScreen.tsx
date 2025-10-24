@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import {
   View,
   Text,
@@ -18,10 +18,12 @@ const HomeScreen = ({ navigation }: any) => {
   const [foods, setFoods] = useState<Food[]>([]);
   const [visible, setVisible] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0];
+  const hasShownPopup = useRef(false); // ✅ chỉ cho phép hiển thị 1 lần
 
-  // 🎉 Hiển thị popup chào mừng
+  // 🎉 Popup chào mừng khi đăng nhập
   useEffect(() => {
-    if (user) {
+    if (user && !hasShownPopup.current) {
+      hasShownPopup.current = true; // ✅ Đánh dấu đã hiển thị
       setVisible(true);
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -29,7 +31,7 @@ const HomeScreen = ({ navigation }: any) => {
         useNativeDriver: true,
       }).start();
 
-      const timer = setTimeout(() => handleClose(), 20000);
+      const timer = setTimeout(() => handleClose(), 8000);
       return () => clearTimeout(timer);
     }
   }, [user]);
@@ -48,7 +50,9 @@ const HomeScreen = ({ navigation }: any) => {
   }, []);
 
   const loadFoods = async () => {
+    console.log("🔄 Đang tải danh sách món ăn...");
     const data = await getFoods();
+    console.log("📦 Dữ liệu món ăn nhận được trong HomeScreen:", data);
     setFoods(data);
   };
 
@@ -71,7 +75,7 @@ const HomeScreen = ({ navigation }: any) => {
       <FlatList
         data={foods}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id?.toString() || Math.random().toString()}
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         showsVerticalScrollIndicator={false}
@@ -94,9 +98,9 @@ const HomeScreen = ({ navigation }: any) => {
             <Text style={styles.message}>
               Rất vui khi gặp lại{" "}
               <Text style={{ fontWeight: "bold", color: "#f97316" }}>
-                {user?.fullName || "bạn"}
-              </Text>
-              {" "}☕{"\n"}Chúc bạn một ngày thật tuyệt vời!
+                {user?.name || "bạn"}
+              </Text>{" "}
+              ☕{"\n"}Chúc bạn một ngày thật tuyệt vời!
             </Text>
           </Animated.View>
         </View>
@@ -131,7 +135,6 @@ const styles = StyleSheet.create({
   name: { fontSize: 16, fontWeight: "600", textAlign: "center", marginTop: 8 },
   category: { fontSize: 13, color: "#888" },
   price: { color: "#ff6600", fontWeight: "bold", marginTop: 6 },
-
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.35)",
@@ -163,17 +166,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     lineHeight: 22,
   },
-  closeBtn: {
-    position: "absolute",
-    top: 10,
-    right: 14,
-    zIndex: 10,
-  },
-  closeText: {
-    fontSize: 30,
-    color: "#bbb",
-    fontWeight: "bold",
-  },
+  closeBtn: { position: "absolute", top: 10, right: 14, zIndex: 10 },
+  closeText: { fontSize: 30, color: "#bbb", fontWeight: "bold" },
 });
 
 export default HomeScreen;

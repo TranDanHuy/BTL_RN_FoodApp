@@ -13,9 +13,13 @@ export type Food = {
 export const getFoods = async (): Promise<Food[]> => {
   try {
     const response = await api.get("/foods");
+
+    // 👉 Thêm log này để kiểm tra xem dữ liệu có về frontend chưa
+    console.log("✅ Dữ liệu món ăn nhận được từ backend:", response.data);
+
     return response.data;
-  } catch (error) {
-    console.error("Lỗi khi lấy danh sách món ăn:", error);
+  } catch (error: any) {
+    console.error("❌ Lỗi khi lấy danh sách món ăn:", error.message || error);
     return [];
   }
 };
