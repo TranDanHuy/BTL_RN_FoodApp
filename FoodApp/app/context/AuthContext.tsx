@@ -1,86 +1,74 @@
 import React, { createContext, useState, ReactNode } from "react";
-import usersDataRaw from "../data/users.json";
+import { Alert } from "react-native";
+import { loginUser, registerUser } from "../services/userService";
 
 type User = {
   id: string;
-  fullName: string;
+  name: string;
   email: string;
-  password: string;
   role: "user" | "admin";
-  active: boolean;
 };
 
 type AuthContextType = {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  register: (fullName: string, email: string, password: string) => void;
-  verifyAccount: (email: string) => void;
+  register: (fullName: string, email: string, password: string) => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   login: async () => false,
   logout: () => {},
-  register: () => {},
-  verifyAccount: () => {},
+  register: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const usersData: User[] = usersDataRaw as User[];
 
+  // 🟢 Hàm đăng nhập (gọi API thật)
   const login = async (email: string, password: string) => {
-    const found = usersData.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (found) {
-      if (!found.active) {
-        alert("Tài khoản chưa được kích hoạt, vui lòng xác minh email.");
+    try {
+      const data = await loginUser(email, password);
+      if (data && data.user) {
+        setUser({
+          id: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+          role: data.user.role,
+        });
+        Alert.alert("🎉 Thành công", data.message || "Đăng nhập thành công!");
+        return true;
+      } else {
+        Alert.alert("❌ Thất bại", "Không nhận được phản hồi hợp lệ từ server!");
         return false;
       }
-      setUser(found);
-      return true;
-    } else {
-      alert("Sai email hoặc mật khẩu.");
+    } catch (error: any) {
+      console.log("❌ Lỗi đăng nhập:", error.response?.data || error.message);
+      Alert.alert("Lỗi", "Sai email hoặc mật khẩu!");
       return false;
     }
   };
 
+  // 🟢 Hàm đăng xuất
   const logout = () => {
     setUser(null);
+    Alert.alert("Đã đăng xuất");
   };
 
-  const register = (fullName: string, email: string, password: string) => {
-    const exist = usersData.find((u) => u.email === email);
-    if (exist) {
-      alert("Email đã tồn tại!");
-      return;
-    }
-    const newUser: User = {
-      id: (usersData.length + 1).toString(),
-      fullName,
-      email,
-      password,
-      role: "user",
-      active: false,
-    };
-    usersData.push(newUser);
-    alert("Đăng ký thành công, vui lòng xác minh email!");
-  };
-
-  const verifyAccount = (email: string) => {
-    const userIndex = usersData.findIndex((u) => u.email === email);
-    if (userIndex !== -1) {
-      usersData[userIndex].active = true;
-      alert("Tài khoản đã được xác minh thành công!");
+  // 🟢 Hàm đăng ký (gọi API thật)
+  const register = async (fullName: string, email: string, password: string) => {
+    try {
+      const data = await registerUser(fullName, email, password);
+      Alert.alert("🎉 Thành công", data.message || "Đăng ký thành công!");
+    } catch (error: any) {
+      console.log("❌ Lỗi đăng ký:", error.response?.data || error.message);
+      Alert.alert("Lỗi", "Không thể đăng ký, vui lòng thử lại!");
     }
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, login, logout, register, verifyAccount }}
-    >
+    <AuthContext.Provider value={{ user, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );
