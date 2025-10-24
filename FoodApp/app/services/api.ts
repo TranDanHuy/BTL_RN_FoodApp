@@ -9,7 +9,9 @@ import axios from "axios";
 
 // 👇 GỢI Ý: thử lần lượt 2 dòng này (bật dòng phù hợp, tắt dòng còn lại)
 const BASE_URL = "http://10.0.2.2:4000/api"; // ✅ Dành cho Android Emulator
-// const BASE_URL = "http://192.168.1.101:4000/api"; // ✅ Dành cho điện thoại thật
+ //const BASE_URL = "http://192.168.1.101:4000/api"; // ✅ Dành cho điện thoại thật
+ //const BASE_URL = "http://192.168.1.109:4000/api";
+
 
 const api = axios.create({
   baseURL: BASE_URL,
