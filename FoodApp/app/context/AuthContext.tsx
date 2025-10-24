@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 import { loginUser, registerUser } from "../services/userService";
 
 type User = {
-  id: string;
+  _id: string; // ✅ Đổi từ id → _id để khớp với MongoDB
   name: string;
   email: string;
   role: "user" | "admin";
@@ -26,13 +26,14 @@ export const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  // 🟢 Hàm đăng nhập (gọi API thật)
+  // 🟢 Đăng nhập (API thật)
   const login = async (email: string, password: string) => {
     try {
       const data = await loginUser(email, password);
       if (data && data.user) {
+        // ✅ Giả sử backend trả về user._id, nên dùng _id thay vì id
         setUser({
-          id: data.user.id,
+          _id: data.user._id,
           name: data.user.name,
           email: data.user.email,
           role: data.user.role,
@@ -50,13 +51,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // 🟢 Hàm đăng xuất
+  // 🟢 Đăng xuất
   const logout = () => {
     setUser(null);
     Alert.alert("Đã đăng xuất");
   };
 
-  // 🟢 Hàm đăng ký (gọi API thật)
+  // 🟢 Đăng ký
   const register = async (fullName: string, email: string, password: string) => {
     try {
       const data = await registerUser(fullName, email, password);

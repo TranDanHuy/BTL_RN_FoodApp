@@ -2,6 +2,8 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { Food } from "../services/foodService";
+import { createOrder } from "../services/orderService"; // ✅ Import chính xác
+import { AuthContext } from "../context/AuthContext";
 
 export type CartItem = {
   food: Food;
@@ -29,8 +31,9 @@ export const CartContext = createContext<CartContextType>({
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const STORAGE_KEY = "@foodapp_cart";
+  const { user } = useContext(AuthContext); // ✅ Lấy user từ context
 
-  // ✅ Khôi phục giỏ hàng khi mở app
+  // 🧩 Khôi phục giỏ hàng khi mở app
   useEffect(() => {
     const loadCart = async () => {
       try {
@@ -43,17 +46,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     loadCart();
   }, []);
 
-  // ✅ Tự động lưu giỏ hàng khi thay đổi
+  // 💾 Tự động lưu giỏ hàng khi thay đổi
   useEffect(() => {
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems)).catch((e) =>
       console.log("❌ Lỗi lưu giỏ hàng:", e)
     );
   }, [cartItems]);
 
-  // ➕ Thêm món
+  // ➕ Thêm món ăn
   const addToCart = (food: Food, quantity = 1) => {
     setCartItems((prev) => {
-      const exist = prev.find((item) => item.food._id === food._id); // ✅ dùng _id
+      const exist = prev.find((item) => item.food._id === food._id);
       if (exist) {
         return prev.map((item) =>
           item.food._id === food._id
@@ -67,21 +70,22 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // ❌ Xóa 1 món
   const removeFromCart = (id: string) => {
-    setCartItems((prev) => prev.filter((item) => item.food._id !== id)); // ✅ dùng _id
+    setCartItems((prev) => prev.filter((item) => item.food._id !== id));
   };
 
-  // 🧹 Xóa tất cả món
+  // 🧹 Xóa toàn bộ giỏ hàng
   const clearCart = async () => {
     setCartItems([]);
     await AsyncStorage.removeItem(STORAGE_KEY);
   };
 
+  // 💰 Tính tổng giá
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.food.price * item.quantity,
     0
   );
 
-  // ✅ Đặt hàng (lưu vào lịch sử)
+  // 🧾 Đặt hàng và gửi lên backend MongoDB
   const placeOrder = async () => {
     if (cartItems.length === 0) {
       Alert.alert("Giỏ hàng trống", "Hãy thêm món ăn trước khi đặt hàng!");
@@ -89,22 +93,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const order = {
-      id: Date.now().toString(),
+      userId: user?._id || "guest",
       items: cartItems,
       total: totalPrice,
       date: new Date().toLocaleString("vi-VN"),
     };
 
     try {
-      const existing = await AsyncStorage.getItem("orders");
-      const orders = existing ? JSON.parse(existing) : [];
-      orders.push(order);
-      await AsyncStorage.setItem("orders", JSON.stringify(orders));
-
+      await createOrder(order); // ✅ Gọi API backend lưu đơn hàng
       clearCart();
-      Alert.alert("🎉 Thành công", "Đơn hàng của bạn đã được đặt!");
+      Alert.alert("🎉 Thành công", "Đơn hàng của bạn đã được lưu vào hệ thống!");
     } catch (e) {
-      Alert.alert("Lỗi", "Không thể lưu đơn hàng!");
+      console.log("❌ Lỗi gửi đơn hàng:", e);
+      Alert.alert("Lỗi", "Không thể gửi đơn hàng lên server!");
     }
   };
 

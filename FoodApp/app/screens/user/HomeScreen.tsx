@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,45 +6,13 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  Modal,
-  Animated,
 } from "react-native";
 import { getFoods, Food } from "../../services/foodService";
 import { getImage } from "../../utils/imageMapper";
-import { AuthContext } from "../../context/AuthContext";
 
 const HomeScreen = ({ navigation }: any) => {
-  const { user } = useContext(AuthContext);
   const [foods, setFoods] = useState<Food[]>([]);
-  const [visible, setVisible] = useState(false);
-  const fadeAnim = useState(new Animated.Value(0))[0];
-  const hasShownPopup = useRef(false); // ✅ chỉ cho phép hiển thị 1 lần
 
-  // 🎉 Popup chào mừng khi đăng nhập
-  useEffect(() => {
-    if (user && !hasShownPopup.current) {
-      hasShownPopup.current = true; // ✅ Đánh dấu đã hiển thị
-      setVisible(true);
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-      }).start();
-
-      const timer = setTimeout(() => handleClose(), 8000);
-      return () => clearTimeout(timer);
-    }
-  }, [user]);
-
-  const handleClose = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 400,
-      useNativeDriver: true,
-    }).start(() => setVisible(false));
-  };
-
-  // 🍔 Load danh sách món ăn
   useEffect(() => {
     loadFoods();
   }, []);
@@ -71,7 +39,6 @@ const HomeScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>🍔 Danh sách món ăn</Text>
-
       <FlatList
         data={foods}
         renderItem={renderItem}
@@ -80,31 +47,6 @@ const HomeScreen = ({ navigation }: any) => {
         columnWrapperStyle={{ justifyContent: "space-between" }}
         showsVerticalScrollIndicator={false}
       />
-
-      {/* 🎉 Popup chào mừng */}
-      <Modal transparent visible={visible} animationType="fade">
-        <View style={styles.overlay}>
-          <Animated.View style={[styles.popup, { opacity: fadeAnim }]}>
-            <TouchableOpacity style={styles.closeBtn} onPress={handleClose}>
-              <Text style={styles.closeText}>×</Text>
-            </TouchableOpacity>
-
-            <Image
-              source={require("../../../assets/images/Welcome.webp")}
-              style={styles.popupImage}
-            />
-
-            <Text style={styles.title}>🎉 Chào mừng trở lại!</Text>
-            <Text style={styles.message}>
-              Rất vui khi gặp lại{" "}
-              <Text style={{ fontWeight: "bold", color: "#f97316" }}>
-                {user?.name || "bạn"}
-              </Text>{" "}
-              ☕{"\n"}Chúc bạn một ngày thật tuyệt vời!
-            </Text>
-          </Animated.View>
-        </View>
-      </Modal>
     </View>
   );
 };
@@ -135,39 +77,6 @@ const styles = StyleSheet.create({
   name: { fontSize: 16, fontWeight: "600", textAlign: "center", marginTop: 8 },
   category: { fontSize: 13, color: "#888" },
   price: { color: "#ff6600", fontWeight: "bold", marginTop: 6 },
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.35)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  popup: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 24,
-    padding: 20,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  popupImage: { width: 110, height: 110, resizeMode: "contain" },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#ff6600",
-    marginTop: 12,
-  },
-  message: {
-    fontSize: 15,
-    color: "#333",
-    textAlign: "center",
-    marginTop: 10,
-    lineHeight: 22,
-  },
-  closeBtn: { position: "absolute", top: 10, right: 14, zIndex: 10 },
-  closeText: { fontSize: 30, color: "#bbb", fontWeight: "bold" },
 });
 
 export default HomeScreen;

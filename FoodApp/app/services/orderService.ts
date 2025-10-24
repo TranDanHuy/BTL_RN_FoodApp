@@ -1,30 +1,23 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Food } from "./foodService";
+import api from "./api";
 
-type Order = {
-  id: string;
-  items: (Food & { quantity: number })[];
-  total: number;
-  date: string;
+// 🧾 Gửi đơn hàng lên backend MongoDB
+export const createOrder = async (orderData: any) => {
+  try {
+    const res = await api.post("/orders", orderData);
+    return res.data;
+  } catch (err) {
+    console.error("❌ Lỗi khi tạo đơn hàng:", err);
+    throw err;
+  }
 };
 
-export const addOrder = async (items: (Food & { quantity: number })[]) => {
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const newOrder: Order = {
-    id: Date.now().toString(),
-    items,
-    total,
-    date: new Date().toLocaleString("vi-VN"),
-  };
-
-  const existing = await AsyncStorage.getItem("orders");
-  const orders = existing ? JSON.parse(existing) : [];
-  orders.push(newOrder);
-
-  await AsyncStorage.setItem("orders", JSON.stringify(orders));
-};
-
-export const getOrders = async (): Promise<Order[]> => {
-  const data = await AsyncStorage.getItem("orders");
-  return data ? JSON.parse(data) : [];
+// 📦 Lấy danh sách đơn hàng (nếu cần dùng ở OrderScreen)
+export const getOrders = async () => {
+  try {
+    const res = await api.get("/orders");
+    return res.data;
+  } catch (err) {
+    console.error("❌ Lỗi khi lấy danh sách đơn hàng:", err);
+    return [];
+  }
 };
