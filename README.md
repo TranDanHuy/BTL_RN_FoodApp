@@ -1,4 +1,4 @@
-# PHÂN CÔNG CÔNG VIỆC NHÓM - HỆ THỐNG TUYỂN DỤNG
+# PHÂN CÔNG CÔNG VIỆC NHÓM - HỆ THỐNG GIAO ĐỒ ĂN  FOODAPP
 
 ## THÔNG TIN CHUNG
 - **Tên dự án**: Hệ thống đặt món ăn FoodApp
