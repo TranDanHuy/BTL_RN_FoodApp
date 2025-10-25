@@ -1,4 +1,4 @@
-# PHÂN CÔNG CÔNG VIỆC NHÓM - HỆ THỐNG ĐẶT MÓN ĂN  FOODAPP
+# MÔ TẢ - HỆ THỐNG ĐẶT MÓN ĂN  FOODAPP
 
 ## THÔNG TIN CHUNG
 - **Tên dự án**: Hệ thống đặt món ăn FoodApp
