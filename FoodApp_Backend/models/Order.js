@@ -5,7 +5,7 @@ const orderSchema = new mongoose.Schema({
   items: [
     {
       food: {
-        type: Object, // có thể dùng Schema.Types.Mixed nếu muốn linh hoạt
+        type: Object,
         required: true,
       },
       quantity: { type: Number, required: true },

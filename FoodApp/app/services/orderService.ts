@@ -1,23 +1,47 @@
 import api from "./api";
 
-// 🧾 Gửi đơn hàng lên backend MongoDB
-export const createOrder = async (orderData: any) => {
+export type Order = {
+  _id: string;
+  id: string;
+  customerName: string;
+  items: {
+    foodId: string;
+    name: string;
+    quantity: number;
+    price: number;
+  }[];
+  total: number;
+  createdAt: string;
+};
+
+export const getOrders = async (): Promise<Order[]> => {
   try {
-    const res = await api.post("/orders", orderData);
-    return res.data;
-  } catch (err) {
-    console.error("❌ Lỗi khi tạo đơn hàng:", err);
-    throw err;
+    const response = await api.get("/orders");
+    console.log("Dữ liệu đơn hàng:", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error("Lỗi khi lấy đơn hàng:", error.message || error);
+    return [];
   }
 };
 
-// 📦 Lấy danh sách đơn hàng (nếu cần dùng ở OrderScreen)
-export const getOrders = async () => {
+export type OrderPayload = {
+  userId: string;
+  items: {
+    food: any;
+    quantity: number;
+  }[];
+  total: number;
+  date: string;
+};
+
+export const createOrder = async (order: OrderPayload) => {
   try {
-    const res = await api.get("/orders");
-    return res.data;
-  } catch (err) {
-    console.error("❌ Lỗi khi lấy danh sách đơn hàng:", err);
-    return [];
+    const response = await api.post("/orders", order);
+    console.log("Đơn hàng đã tạo:", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error("Lỗi khi tạo đơn hàng:", error.message || error);
+    throw error;
   }
 };

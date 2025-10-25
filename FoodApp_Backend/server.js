@@ -29,7 +29,6 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 
-// ✅ Sửa phần này: dùng "0.0.0.0" để cho phép thiết bị cùng mạng truy cập
 app.listen(PORT, "0.0.0.0", () =>
-  console.log(`🚀 Server running on http://192.168.1.109:${PORT}`)
+  console.log(` Server running on ${PORT}`)
 );

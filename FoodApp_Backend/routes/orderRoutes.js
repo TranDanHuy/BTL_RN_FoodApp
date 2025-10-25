@@ -3,7 +3,6 @@ import Order from "../models/Order.js";
 
 const router = express.Router();
 
-// ✅ POST - tạo đơn hàng mới
 router.post("/", async (req, res) => {
   try {
     const newOrder = new Order(req.body);
@@ -14,7 +13,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ GET - lấy tất cả đơn hàng (tuỳ role user)
 router.get("/", async (req, res) => {
   try {
     const orders = await Order.find();

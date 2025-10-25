@@ -72,31 +72,31 @@ const FoodManager = () => {
   };
 
   const handleSave = async () => {
-    if (!name || !price || !category) {
-      Alert.alert("Thiếu thông tin", "Vui lòng nhập đầy đủ tên, giá và loại món ăn");
-      return;
-    }
+  if (!name || !price || !category) {
+    Alert.alert("Thiếu thông tin", "Vui lòng nhập đầy đủ tên, giá và loại món ăn");
+    return;
+  }
 
-    const newFood = {
-      name,
-      price: parseFloat(price),
-      category,
-      image: image || "default",
-      description: description || "Không có mô tả",
-    };
-
-    if (editingFood) {
-      await updateFood(editingFood.id, newFood);
-      Alert.alert("✔", "Cập nhật món ăn thành công!");
-    } else {
-      await addFood(newFood);
-      Alert.alert("✔", "Thêm món mới thành công!");
-    }
-
-    setModalVisible(false);
-    resetForm();
-    loadFoods();
+  const newFood = {
+    name,
+    price: parseFloat(price),
+    category,
+    image: image || "default",
+    description: description || "Không có mô tả",
   };
+
+  if (editingFood) {
+    await updateFood(editingFood.id, { ...newFood, id: editingFood.id });
+    Alert.alert("✔", "Cập nhật món ăn thành công!");
+  } else {
+    await addFood(newFood);
+    Alert.alert("✔", "Thêm món mới thành công!");
+  }
+
+  setModalVisible(false);
+  resetForm();
+  loadFoods();
+};
 
   const handleDelete = async (id: string) => {
     Alert.alert("Xác nhận", "Bạn có chắc muốn xóa món này?", [
@@ -134,7 +134,7 @@ const FoodManager = () => {
         <TouchableOpacity onPress={() => openEditModal(item)} style={styles.iconButton}>
           <Ionicons name="create-outline" size={22} color="#4CAF50" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.iconButton}>
+        <TouchableOpacity onPress={() => handleDelete(item.id || item._id)} style={styles.iconButton}>
           <Ionicons name="trash-outline" size={22} color="#ff4d4d" />
         </TouchableOpacity>
       </View>
@@ -151,7 +151,7 @@ const FoodManager = () => {
 
       <FlatList
         data={foods}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id || item._id}
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: 100 }}
       />

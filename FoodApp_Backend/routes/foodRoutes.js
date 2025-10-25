@@ -1,12 +1,12 @@
 import express from "express";
-import { getFoods, addFood } from "../controllers/foodController.js";
+import { getFoods, addFood, deleteFood } from "../controllers/foodController.js";
 
 const router = express.Router();
 
-// ✅ Lấy danh sách món ăn
 router.get("/", getFoods);
 
-// ✅ Thêm món ăn mới
 router.post("/", addFood);
+
+router.delete("/:id", deleteFood);
 
 export default router;

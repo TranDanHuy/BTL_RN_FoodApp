@@ -55,7 +55,11 @@ const AdminDrawer = () => {
         drawerActiveBackgroundColor: "#fff3e6",
       }}
     >
-      {/* Bỏ trang chủ khỏi DrawerItemList để tránh trùng lặp */}
+      <Drawer.Screen
+        name="Tổng quan hệ thống"
+        component={AdminDashboard}
+        options={{ title: "Tổng quan hệ thống" }}
+      />
       <Drawer.Screen
         name="Quản lý món ăn"
         component={FoodManager}

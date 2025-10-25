@@ -10,7 +10,7 @@ const FoodDetailScreen = ({ route }: any) => {
   const [qty, setQty] = useState(1);
   const navigation = useNavigation();
 
-  // 🔻 Ẩn Bottom Tab khi vào trang chi tiết
+  // Ẩn Bottom Tab khi vào trang chi tiết
   useLayoutEffect(() => {
     const parent = navigation.getParent();
     parent?.setOptions({ tabBarStyle: { display: "none" } });
